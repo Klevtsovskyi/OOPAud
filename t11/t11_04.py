@@ -6,5 +6,13 @@ def a(n):
     return f
 
 
+def b(n):
+    f = 2
+    for _ in range(n - 1):
+        print(f)
+        f = 2 + 1 / f
+    return f - 1
+
+
 if __name__ == '__main__':
-    print(a(10))
+    print(b(10))
