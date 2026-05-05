@@ -2,21 +2,48 @@ from tkinter import *
 
 root = Tk()
 
-entry = Entry(root, font="Arial 24")
-entry.grid(row=1, column=1, sticky=N)
-label = Label(root, font="Arial 24", text="Hello!")
-label.grid(row=2, column=2, sticky=E)
-label.bind("<Button-1>", lambda event: print(f"you clicked me! {event}"))
+moving = False
+
+canvas = Canvas(root, width=400, height=300)
+canvas.pack()
+
+oval = canvas.create_oval(150, 150, 200, 200, fill="red")
 
 
-def callback():
-    value = entry.get()
-    label["text"] = value
+def moving_on(ev):
+    global moving
+    moving = True
+
+def moving_off(ev):
+    global moving
+    moving = False
 
 
-btn1 = Button(root, text="Hello!", font="Arial 24")
-btn1.configure(command=callback)
-btn1.grid(row=3, column=1)
-entry.focus()
+def move(ev):
+    if moving:
+        x = ev.x
+        y = ev.y
+
+        x0 = x - 25
+        y0 = y - 25
+        x1 = x + 25
+        y1 = y + 25
+        canvas.coords(oval, x0, y0, x1, y1)
+
+
+def animate(ids):
+    canvas.move(ids, 1, 0)
+    canvas.after(10, animate, ids)
+
+def animate_rect(ev):
+    animate(rect)
+
+rect = canvas.create_rectangle(100, 100, 150, 150, fill="blue")
+
+canvas.tag_bind(rect, "<ButtonPress-1>", animate_rect)
+canvas.tag_bind(oval, "<ButtonPress-1>", moving_on)
+canvas.tag_bind(oval, "<ButtonRelease-1>", moving_off)
+canvas.tag_bind(oval, "<Motion>", move)
+
 
 root.mainloop()
